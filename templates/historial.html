@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Historial | Inventario{% endblock %}
+{% block content %}
+<div class="social-feed">
+    <div class="card social-card p-4 mb-4">
+        <div class="social-card-header">
+            <i class="bi bi-clock-history fs-3 me-2 text-secondary"></i>
+            <span class="fw-bold">Historial de Movimientos</span>
+        </div>
+        <div class="social-card-body">
+            <form class="row g-3" method="get">
+                <div class="col-md-5">
+                    <input type="text" name="search" class="form-control" placeholder="Buscar por dispositivo, supervisor, ubicación, código o devolución..." value="{{ search }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="tipo" class="form-select">
+                        <option value="">Todos los tipos</option>
+                        {% for tipo in tipos %}
+                        <option value="{{ tipo }}" {% if tipo == filtro_tipo %}selected{% endif %}>{{ tipo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" type="submit"><i class="bi bi-funnel"></i> Filtrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row g-4">
+        {% for m in movimientos %}
+        <div class="col-md-6">
+            <div class="card social-card">
+                <div class="social-card-header">
+                    <img src="https://ui-avatars.com/api/?name={{ m.dispositivo|replace(' ','+') }}&background=6c757d&color=fff&rounded=true&size=48" class="social-avatar me-2" alt="avatar">
+                    <div>
+                        <span class="fw-bold">{{ m.dispositivo }}</span><br>
+                        <span class="badge bg-secondary">{{ m.tipo }}</span>
+                    </div>
+                </div>
+                <div class="social-card-body">
+                    <div class="mb-2"><b>Supervisor:</b> {{ m.supervisor }}</div>
+                    {% if m.devuelto_por %}<div class="mb-2"><b>Devuelto por:</b> {{ m.devuelto_por }}</div>{% endif %}
+                    <div class="mb-2"><b>Ubicación:</b> {{ m.ubicacion }}</div>
+                    <div class="mb-2"><b>Código evento:</b> {{ m.codigo_evento }}</div>
+                    <div class="text-muted small">{{ m.fecha }}</div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center text-muted">No hay movimientos registrados.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

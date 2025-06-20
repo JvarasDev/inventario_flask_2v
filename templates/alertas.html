@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Alertas | Inventario{% endblock %}
+{% block content %}
+<div class="social-feed">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <div class="card social-card p-4 mb-4">
+        <div class="social-card-header">
+            <i class="bi bi-exclamation-triangle fs-3 me-2 text-warning"></i>
+            <span class="fw-bold">Alertas de Dispositivos</span>
+            <button class="btn btn-primary ms-auto d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modalAgregarAlerta">
+                <i class="bi bi-plus-circle me-1"></i> Nueva alerta
+            </button>
+        </div>
+        <div class="social-card-body">
+            <form class="row g-3" method="get">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Buscar dispositivo, comentario o reparación" value="{{ request.args.get('search', '') }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="estado" class="form-select">
+                        <option value="">Todos los estados</option>
+                        <option value="0" {% if request.args.get('estado') == '0' %}selected{% endif %}>No resueltas</option>
+                        <option value="1" {% if request.args.get('estado') == '1' %}selected{% endif %}>Resueltas</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="dispositivo" class="form-select">
+                        <option value="">Todos los dispositivos</option>
+                        {% for d in dispositivos %}
+                        <option value="{{ d['name'] }}" {% if request.args.get('dispositivo') == d['name'] %}selected{% endif %}>{{ d['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" type="submit"><i class="bi bi-funnel"></i> Filtrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if mensaje %}
+    <div class="alert alert-info">{{ mensaje }}</div>
+    {% endif %}
+    <div class="row g-4">
+        {% if alertas|length == 0 %}
+        <div class="col-12 text-center text-muted py-5">
+            <i class="bi bi-emoji-smile fs-1 text-success"></i><br>
+            <span>¡No hay alertas registradas!</span>
+        </div>
+        {% endif %}
+        {% for alerta in alertas %}
+        <div class="col-md-6">
+            <div class="card social-card border-3 shadow-sm mb-4 {% if alerta['resuelto'] %}border-success{% else %}border-warning{% endif %}">
+                <div class="social-card-header align-items-center">
+                    <img src="https://ui-avatars.com/api/?name={{ alerta['dispositivo']|replace(' ','+') }}&background=ff5e62&color=fff&rounded=true&size=48" class="social-avatar me-2" alt="avatar">
+                    <div>
+                        <span class="fw-bold fs-5">{{ alerta['dispositivo'] }}</span><br>
+                        <span class="badge {% if alerta['resuelto'] %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                            {% if alerta['resuelto'] %}Resuelta{% else %}No resuelta{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="social-card-body">
+                    <div class="mb-2"><b>Comentario:</b> {{ alerta['comentario'] }}</div>
+                    <div class="mb-2 d-flex flex-wrap gap-2">
+                        <span class="badge bg-secondary">Botón derecho: <b>{{ alerta['boton_derecho'] }}</b></span>
+                        <span class="badge bg-secondary">Botón izquierdo: <b>{{ alerta['boton_izquierdo'] }}</b></span>
+                        <span class="badge bg-secondary">Mica dañada: <b>{{ alerta['mica_danada'] }}</b></span>
+                    </div>
+                    <div class="text-muted small">Fecha: {{ alerta['fecha'] }}</div>
+                    {% if alerta['resuelto'] and alerta['reparacion'] %}
+                    <div class="mt-2"><b>Reparación:</b> <span class="text-success">{{ alerta['reparacion'] }}</span></div>
+                    {% endif %}
+                </div>
+                <div class="social-card-actions">
+                    {% if not alerta['resuelto'] and session['user_rol'] != 'supervisor' %}
+                    <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalResolver{{ alerta['id'] }}"><i class="bi bi-check-circle"></i> Resolver</button>
+                    {% endif %}
+                    <form method="post" action="{{ url_for('alerta_reparar', alerta_id=alerta['id']) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar esta alerta?')"><i class="bi bi-trash"></i> Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Modal para resolver alerta -->
+        {% if session['user_rol'] != 'supervisor' %}
+        <div class="modal fade" id="modalResolver{{ alerta['id'] }}" tabindex="-1" aria-labelledby="modalResolverLabel{{ alerta['id'] }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="post" action="{{ url_for('alerta_reparar', alerta_id=alerta['id']) }}">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalResolverLabel{{ alerta['id'] }}">Resolver alerta de {{ alerta['dispositivo'] }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="reparacion{{ alerta['id'] }}" class="form-label">¿Qué reparación se realizó?</label>
+                    <textarea class="form-control" id="reparacion{{ alerta['id'] }}" name="reparacion" required></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-success">Marcar como resuelta</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+<!-- Modal para agregar alerta -->
+<div class="modal fade" id="modalAgregarAlerta" tabindex="-1" aria-labelledby="modalAgregarAlertaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{{ url_for('alertas') }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalAgregarAlertaLabel">Nueva alerta de dispositivo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="dispositivo" class="form-label">Dispositivo</label>
+            <select class="form-select" id="dispositivo" name="dispositivo" required>
+              <option value="">Selecciona un dispositivo</option>
+              {% for d in dispositivos %}
+              <option value="{{ d['name'] }}">{{ d['name'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="comentario" class="form-label">Comentario</label>
+            <textarea class="form-control" id="comentario" name="comentario" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">¿Botón derecho dañado?</label>
+            <select class="form-select" name="boton_derecho" required>
+              <option value="No">No</option>
+              <option value="Sí">Sí</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">¿Botón izquierdo dañado?</label>
+            <select class="form-select" name="boton_izquierdo" required>
+              <option value="No">No</option>
+              <option value="Sí">Sí</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">¿Mica dañada?</label>
+            <select class="form-select" name="mica_danada" required>
+              <option value="No">No</option>
+              <option value="Sí">Sí</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Registrar alerta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<a href="#" class="fab-social d-md-none" title="Nueva alerta" data-bs-toggle="modal" data-bs-target="#modalAgregarAlerta">
+    <i class="bi bi-exclamation-triangle"></i>
+</a>
+{% endblock %}

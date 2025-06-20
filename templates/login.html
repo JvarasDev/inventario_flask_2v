@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Inventario{% endblock %}
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center social-feed" style="min-height:60vh;">
+    <div class="card social-card p-4" style="max-width: 400px;">
+        <div class="social-card-header justify-content-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Logo" class="social-avatar mb-2">
+        </div>
+        <div class="social-card-body">
+            <h2 class="mb-4">Iniciar sesión</h2>
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            <form method="post">
+                <div class="mb-3">
+                    <label for="correo" class="form-label">Correo electrónico</label>
+                    <input type="email" class="form-control" id="correo" name="correo" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

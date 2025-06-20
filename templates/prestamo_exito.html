@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Préstamo Registrado{% endblock %}
+{% block content %}
+<div class="container" style="max-width:600px; margin-top:60px;">
+    <div class="alert alert-success text-center">
+        <h4 class="alert-heading">¡Préstamo registrado exitosamente!</h4>
+        <p>El supervisor <b>{{ supervisor }}</b> ha recibido los dispositivos seleccionados.</p>
+        <hr>
+        <a href="{{ url_for('gestionar_prestamos') }}" class="btn btn-primary">Registrar otro préstamo</a>
+    </div>
+</div>
+{% endblock %}

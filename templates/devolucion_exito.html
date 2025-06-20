@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Devolución Exitosa{% endblock %}
+{% block content %}
+<div class="container" style="max-width:600px; margin-top:60px;">
+    <div class="alert alert-success text-center">
+        <h4 class="alert-heading">¡Devolución registrada exitosamente!</h4>
+        <p>Los dispositivos seleccionados han sido marcados como <b>disponibles</b>.</p>
+        <hr>
+        <a href="{{ url_for('gestionar_devoluciones') }}" class="btn btn-primary">Registrar otra devolución</a>
+    </div>
+</div>
+{% endblock %}

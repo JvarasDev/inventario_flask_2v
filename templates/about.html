@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Inventario{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center social-feed" style="min-height:60vh;">
+    <div class="card social-card text-center p-4" style="max-width: 480px;">
+        <div class="social-card-header justify-content-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Logo" class="social-avatar mb-2">
+        </div>
+        <div class="social-card-body">
+            <h2 class="fw-bold mb-2" style="color:#0071e3">Inventario </h2>
+			<p class="lead text-muted">Un sistema de gestión de inventario diseñado para facilitar el control.</p>
+			<ul class="text-start mt-3 mb-3" style="font-size:1rem; color:#444;">
+				<li><strong>Registro de productos:</strong> Añade, edita y elimina artículos fácilmente.</li>
+				<li><strong>Historial de movimientos:</strong> Consulta entradas y salidas de inventario con fechas y detalles.</li>
+				<li><strong>Búsqueda y filtrado:</strong> Encuentra productos rápidamente usando filtros avanzados.</li>
+				<li><strong>Reportes:</strong> Genera informes detallados para análisis y toma de decisiones.</li>
+				<li><strong>Interfaz amigable:</strong> Navegación sencilla y diseño responsivo para cualquier dispositivo.</li>
+			</ul>
+			<p class="mb-2" style="font-size:1rem; color:#555;">
+				La plataforma está pensada para pequeñas y medianas empresas, permitiendo optimizar procesos y reducir errores en la gestión de inventarios.
+			</p>
+            <hr>
+			<div class="mt-4">
+				<p class="mb-1" style="font-size:1.1rem; color:#333;">
+					<strong>Desarrollado por</strong> <span style="color:#0071e3;">Juan Varas</span>
+				</p>
+				<p class="mb-0 text-muted" style="font-size:0.95rem;">
+					&copy; 2025 &mdash; Todos los derechos reservados.
+				</p>
+			</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

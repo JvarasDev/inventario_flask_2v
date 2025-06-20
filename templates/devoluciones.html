@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Devoluciones | Inventario{% endblock %}
+{% block content %}
+<div class="social-feed">
+    <div class="row g-4 mb-4">
+        <div class="col-md-7">
+            <div class="card social-card p-4 h-100">
+                <h4 class="fw-bold mb-3"><i class="bi bi-arrow-repeat me-2"></i>Dispositivos en uso</h4>
+                <form class="row g-3 mb-3" method="get">
+                    <div class="col-8">
+                        <input type="text" name="search" class="form-control" placeholder="Buscar por nombre, ubicación, supervisor o ID" value="{{ search }}">
+                    </div>
+                    <div class="col-4 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" type="submit"><i class="bi bi-search"></i> Buscar</button>
+                    </div>
+                </form>
+                <!-- Lector QR -->
+                <div class="card social-card p-4 mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-qr-code-scan fs-2 text-info me-2"></i>
+                        <h5 class="fw-bold mb-0">Escanear QR para agregar dispositivo a devolución</h5>
+                    </div>
+                    <p class="text-muted mb-3">Usa tu cámara para escanear el código QR del dispositivo y agregarlo automáticamente al carrito de devolución.</p>
+                    <div id="qr-reader-devol" style="width:100%; max-width:400px; margin:auto;"></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Supervisor</th>
+                                <th>Ubicación</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for disp in activos %}
+                            <tr>
+                                <td>{{ disp.name }}</td>
+                                <td>{{ disp.supervisor }}</td>
+                                <td>{{ disp.location }}</td>
+                                <td>
+                                    <form method="post" class="d-inline">
+                                        <input type="hidden" name="add_id" value="{{ disp.id }}">
+                                        <button class="btn btn-action" type="submit" title="Agregar al carrito"><i class="bi bi-plus-lg"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="4" class="text-center text-muted">No hay dispositivos en uso.</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card social-card p-4 h-100">
+                <h4 class="fw-bold mb-3"><i class="bi bi-cart-check me-2"></i>Carrito de devolución</h4>
+                {% if carrito %}
+                <ul class="list-group mb-3">
+                    {% for disp in carrito %}
+                    <li class="list-group-item d-flex align-items-center justify-content-between">
+                        <span><i class="bi bi-hdd-network me-2"></i>{{ disp.name }} <span class="badge bg-info ms-2">{{ disp.category }}</span></span>
+                        <span class="text-muted small">{{ disp.location }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <form method="post">
+                    <div class="mb-2">
+                        <label class="form-label">Supervisor</label>
+                        <select name="supervisor" class="form-select" required>
+                            <option value="">Selecciona supervisor</option>
+                            {% for usuario in usuarios %}
+                            <option value="{{ usuario.nombre }}">{{ usuario.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" name="devolver" value="1" class="btn btn-success w-100"><i class="bi bi-check-circle me-1"></i>Registrar devolución</button>
+                </form>
+                {% else %}
+                <div class="alert alert-info">Agrega dispositivos al carrito para registrar una devolución.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script>
+    function onScanSuccessDevol(decodedText, decodedResult) {
+        fetch('/devoluciones/qr', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'device_id=' + encodeURIComponent(decodedText)
+        }).then(r => r.json()).then(data => {
+            if(data.success) showToast('Dispositivo agregado por QR', 'success');
+            else showToast('No se pudo agregar el dispositivo: ' + (data.error || 'ID no válido'), 'error');
+            setTimeout(()=>window.location.reload(), 700);
+        });
+    }
+    if(window.Html5QrcodeScanner) {
+        let scannerDevol = new Html5QrcodeScanner(
+            "qr-reader-devol", { fps: 10, qrbox: 200 });
+        scannerDevol.render(onScanSuccessDevol);
+    }
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+        new bootstrap.Tooltip(el);
+    });
+    </script>
+</div>
+{% endblock %}

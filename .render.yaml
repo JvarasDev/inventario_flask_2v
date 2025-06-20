@@ -1,0 +1,13 @@
+# .render.yaml para despliegue automático en Render
+services:
+  - type: web
+    name: flask-inventario
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    plan: free
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        value: reemplaza_esto_por_un_valor_secreto_unico

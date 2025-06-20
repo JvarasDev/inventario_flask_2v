@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Inventario{% endblock %}
+{% block content %}
+<div class="social-feed">
+    <div class="row metrics-row mb-4">
+        {% for m in metrics %}
+        <div class="col-12 col-md-6 col-lg-3 mb-3">
+            <div class="card social-card text-center h-100 border-3 shadow-sm">
+                <div class="social-card-header justify-content-center">
+                    <i class="bi {{ m.icon }} metric-icon fs-1 mb-2"></i>
+                </div>
+                <div class="social-card-body">
+                    <div class="metric-value fs-2">{{ m.value }}</div>
+                    <div class="metric-title fw-bold">{{ m.title }}</div>
+                    <div class="metric-subtitle text-muted small">{{ m.subtitle }}</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="card social-card rendimiento-panel mb-4">
+        <div class="social-card-header">
+            <i class="bi bi-graph-up-arrow text-success fs-3 me-2"></i>
+            <span class="fw-bold">Rendimiento del sistema</span>
+        </div>
+        <div class="social-card-body">
+            <div class="row mb-3">
+                <div class="col-6 col-md-3 text-center">
+                    <div class="text-muted small">Usuarios</div>
+                    <div class="fw-bold">{{ rendimiento.total_usuarios }}</div>
+                    <div class="text-muted" style="font-size:0.9em;">{{ '%.2f'|format(rendimiento.tiempo_usuarios) }} ms</div>
+                </div>
+                <div class="col-6 col-md-3 text-center">
+                    <div class="text-muted small">Préstamos</div>
+                    <div class="fw-bold">{{ rendimiento.total_prestamos }}</div>
+                    <div class="text-muted" style="font-size:0.9em;">{{ '%.2f'|format(rendimiento.tiempos.prestamos_activos) if rendimiento.tiempos.prestamos_activos is defined else '-' }} ms</div>
+                </div>
+                <div class="col-6 col-md-3 text-center">
+                    <div class="text-muted small">Devoluciones</div>
+                    <div class="fw-bold">{{ rendimiento.total_devoluciones }}</div>
+                    <div class="text-muted" style="font-size:0.9em;">{{ '%.2f'|format(rendimiento.tiempo_devoluciones) }} ms</div>
+                </div>
+                <div class="col-6 col-md-3 text-center">
+                    <div class="text-muted small">Dispositivos</div>
+                    <div class="fw-bold">{{ metrics[0].value if metrics and metrics[0] is defined else '-' }}</div>
+                    <div class="text-muted" style="font-size:0.9em;">{{ '%.2f'|format(rendimiento.tiempos.total_dispositivos) if rendimiento.tiempos.total_dispositivos is defined else '-' }} ms</div>
+                </div>
+            </div>
+            <div class="progress mb-2" style="height: 18px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Óptimo</div>
+            </div>
+            <div class="d-flex justify-content-between text-muted small">
+                <span>Óptimo</span>
+                <span>Crítico</span>
+            </div>
+        </div>
+    </div>
+    <div class="card social-card mb-4">
+        <div class="social-card-header">
+            <i class="bi bi-exclamation-triangle text-warning fs-4 me-2"></i>
+            <span class="fw-bold">Alertas recientes</span>
+        </div>
+        <div class="social-card-body">
+            {% if alertas_recientes and alertas_recientes|length > 0 %}
+            <div class="list-group list-group-flush">
+                {% for alerta in alertas_recientes %}
+                <div class="list-group-item d-flex align-items-center gap-3 py-3">
+                    <i class="bi bi-dot fs-3 {% if alerta['resuelto'] %}text-success{% else %}text-warning{% endif %}"></i>
+                    <div class="flex-fill">
+                        <div class="fw-bold">{{ alerta['dispositivo'] }}</div>
+                        <div class="small text-muted">{{ alerta['comentario'] }}</div>
+                        <div class="small">{{ alerta['fecha'] }}</div>
+                    </div>
+                    {% if not alerta['resuelto'] %}
+                    <span class="badge bg-warning text-dark">No resuelta</span>
+                    {% else %}
+                    <span class="badge bg-success">Resuelta</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-emoji-smile fs-1 text-success"></i><br>
+                <span>No hay alertas recientes.</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<a href="{{ url_for('dispositivos') }}" class="fab-social d-md-none" title="Agregar dispositivo">
+    <i class="bi bi-plus-lg"></i>
+</a>
+{% endblock %}

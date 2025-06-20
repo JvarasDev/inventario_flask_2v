@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Dispositivos | Inventario{% endblock %}
+{% block content %}
+<div class="social-feed">
+    <div class="row g-4 mb-4">
+        <div class="col-md-7">
+            <div class="card social-card p-4 h-100">
+                <form class="row g-3" method="get">
+                    <div class="col-5">
+                        <input type="text" name="search" class="form-control" placeholder="Buscar por nombre, ubicación o supervisor" value="{{ search }}">
+                    </div>
+                    <div class="col-3">
+                        <select name="category" class="form-select">
+                            <option value="">Todas las categorías</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat }}" {% if cat == category %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <select name="status" class="form-select">
+                            <option value="">Todos los estados</option>
+                            {% for st in statuses %}
+                            <option value="{{ st }}" {% if st == status %}selected{% endif %}>{{ st }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" type="submit"><i class="bi bi-funnel"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card social-card p-4 h-100">
+                <form class="row g-3" method="post">
+                    <input type="hidden" name="accion" value="agregar">
+                    <div class="col-12 mb-2">
+                        <span class="fw-semibold">Agregar nuevo dispositivo</span>
+                    </div>
+                    <div class="col-6">
+                        <input type="text" name="nombre" class="form-control" placeholder="Nombre del dispositivo" required>
+                    </div>
+                    <div class="col-6">
+                        <input type="text" name="ubicacion" class="form-control" placeholder="Ubicación" required>
+                    </div>
+                    <div class="col-8">
+                        <select name="categoria" class="form-select" required>
+                            <option value="">Categoría</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat }}">{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-success w-100" type="submit"><i class="bi bi-plus-circle me-1"></i>Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row g-4">
+        {% for dispositivo in dispositivos %}
+        <div class="col-md-6">
+            <div class="card social-card">
+                <div class="social-card-header">
+                    <img src="https://ui-avatars.com/api/?name={{ dispositivo.nombre|replace(' ','+') }}&background=0071e3&color=fff&rounded=true&size=48" class="social-avatar me-2" alt="avatar">
+                    <div>
+                        <span class="fw-bold">{{ dispositivo.nombre }}</span><br>
+                        <span class="text-muted small">{{ dispositivo.ubicacion }}</span>
+                    </div>
+                </div>
+                <div class="social-card-body">
+                    <span class="badge bg-info mb-2">{{ dispositivo.categoria }}</span>
+                    <div class="mb-2">Estado: <span class="fw-semibold">{{ dispositivo.estado }}</span></div>
+                    <div class="mb-2">Supervisor: <span class="fw-semibold">{{ dispositivo.supervisor }}</span></div>
+                </div>
+                <div class="social-card-actions">
+                    <a href="{{ url_for('editar_dispositivo', id=dispositivo.id) }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i> Editar</a>
+                    <a href="{{ url_for('eliminar_dispositivo', id=dispositivo.id) }}" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Eliminar</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {# Mostrar todos los dispositivos registrados en la tabla, sin filtrar por estado #}
+    <div class="card social-card p-4 mb-4">
+        <h4 class="fw-bold mb-3"><i class="bi bi-hdd-network me-2"></i>Todos los dispositivos registrados</h4>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
+                        <th>Ubicación</th>
+                        <th>Supervisor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for disp in devices %}
+                    <tr>
+                        <td>{{ disp.name }}</td>
+                        <td>{{ disp.category }}</td>
+                        <td>{{ disp.status }}</td>
+                        <td>{{ disp.location }}</td>
+                        <td>{{ disp.supervisor }}</td>
+                        <td>
+                            <!-- Formulario para editar dispositivo -->
+                            <form method="post" class="d-inline">
+                                <input type="hidden" name="accion" value="editar">
+                                <input type="hidden" name="id" value="{{ disp.id }}">
+                                <input type="hidden" name="nombre" value="{{ disp.name }}">
+                                <input type="hidden" name="categoria" value="{{ disp.category }}">
+                                <input type="hidden" name="ubicacion" value="{{ disp.location }}">
+                                <button type="submit" class="btn btn-outline-primary btn-sm" title="Editar"><i class="bi bi-pencil"></i></button>
+                            </form>
+                            <!-- Formulario para eliminar dispositivo -->
+                            <form method="post" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este dispositivo?');">
+                                <input type="hidden" name="accion" value="eliminar">
+                                <input type="hidden" name="id" value="{{ disp.id }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6" class="text-center text-muted">No hay dispositivos registrados.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<a href="{{ url_for('dispositivos') }}" class="fab-social d-md-none" title="Agregar dispositivo">
+    <i class="bi bi-plus-lg"></i>
+</a>
+{% endblock %}

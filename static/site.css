@@ -1,0 +1,231 @@
+/* --- Social UI Rediseño --- */
+body.social-bg {
+    background: linear-gradient(135deg, #f5f6fa 0%, #eaf6ff 100%);
+    font-family: 'Inter', 'Roboto', 'Montserrat', Arial, sans-serif;
+    color: #222;
+    min-height: 100vh;
+}
+.social-navbar {
+    background: #fff !important;
+    border-bottom: 1.5px solid #e0e0e0;
+    min-height: 64px;
+    z-index: 1050;
+}
+.social-title {
+    font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+    font-size: 1.4rem;
+    color: #0071e3;
+    letter-spacing: 1px;
+}
+.social-icon-btn {
+    border-radius: 50%;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+}
+.social-login-btn {
+    border-radius: 18px;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+}
+.social-sidebar {
+    background: #fff;
+    border-right: 1.5px solid #e0e0e0;
+    min-height: 100vh;
+    padding-top: 1.5rem;
+}
+.social-sidebar .nav-link {
+    color: #222;
+    font-weight: 500;
+    border-radius: 12px;
+    padding: 0.7rem 1.2rem;
+    transition: background 0.2s, color 0.2s;
+}
+.social-sidebar .nav-link.active, .social-sidebar .nav-link:hover {
+    background: #eaf6ff;
+    color: #0071e3;
+}
+.social-main {
+    background: none;
+    min-height: 100vh;
+}
+.social-feed {
+    background: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 900px;
+}
+.card.social-card, .social-feed .card {
+    border-radius: 22px;
+    box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.10);
+    margin-bottom: 2rem;
+    border: none;
+}
+.social-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem 0.5rem 1.5rem;
+}
+.social-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #0071e3;
+}
+.social-card-body {
+    padding: 1rem 1.5rem;
+}
+.social-card-actions {
+    display: flex;
+    gap: 1.2rem;
+    padding: 0.5rem 1.5rem 1rem 1.5rem;
+}
+.social-card-actions .btn {
+    border-radius: 12px;
+    font-weight: 600;
+}
+.social-bottom-nav {
+    box-shadow: 0 -2px 12px 0 rgba(31,38,135,0.07);
+    border-top: 1.5px solid #e0e0e0;
+}
+/* Toasts */
+#toast-container .toast {
+    min-width: 260px;
+    font-size: 1rem;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.10);
+}
+/* Botón flotante tipo Snapchat */
+.fab-social {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    z-index: 1100;
+    background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+    color: #fff;
+    border-radius: 50%;
+    width: 60px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 4px 16px 0 rgba(255, 105, 135, 0.18);
+    border: none;
+    transition: background 0.2s;
+}
+.fab-social:hover {
+    background: linear-gradient(135deg, #ff5e62 0%, #ff9966 100%);
+}
+/* Feed tipo Instagram */
+.social-feed .card {
+    margin-bottom: 2.2rem;
+    border-radius: 22px;
+    box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.10);
+}
+/* Mejoras de accesibilidad */
+.btn, .form-control, .form-select {
+    outline: none !important;
+    box-shadow: none !important;
+}
+.btn:focus, .form-control:focus, .form-select:focus {
+    outline: 2px solid #0071e3 !important;
+    box-shadow: 0 0 0 2px #0071e322 !important;
+}
+/* Microinteracciones para tablas */
+.table-hover tbody tr:hover {
+    background: #eaf6ff;
+    cursor: pointer;
+}
+.fade-custom {
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(.4,0,.2,1);
+}
+.fade-custom.show {
+  opacity: 1;
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.2s ease-in-out infinite;
+  border-radius: 8px;
+  min-height: 32px;
+}
+@keyframes skeleton-loading {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+.spinner-border {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-width: 0.3em;
+}
+/* Mejoras visuales para desktop */
+@media (min-width: 900px) {
+    .usuarios-container {
+        max-width: 1200px;
+        padding: 3rem 3rem 2rem 3rem;
+    }
+    .card {
+        margin-bottom: 2rem;
+    }
+    .table th, .table td {
+        padding: 1.1rem 1.2rem;
+        font-size: 1.13em;
+    }
+    .table th {
+        font-size: 1.18em;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    h2, h1 {
+        font-size: 2.2rem;
+    }
+}
+.table {
+    border-radius: 18px;
+    box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.10);
+    background: #fff;
+    overflow: hidden;
+}
+.table thead {
+    background: #f5f6fa;
+    border-bottom: 2px solid #e0e0e0;
+}
+.table-hover tbody tr:hover {
+    background: #eaf6ff !important;
+    box-shadow: 0 2px 12px 0 rgba(31, 38, 135, 0.07);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-action {
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-right: 6px;
+    transition: background 0.18s, color 0.18s, transform 0.18s;
+    background: #f5f6fa;
+    color: #0071e3;
+    border: none;
+}
+.btn-action:hover {
+    background: #0071e3;
+    color: #fff;
+    transform: scale(1.08);
+}
+.badge-activo {
+    background: #43e97b !important;
+    color: #222 !important;
+    font-weight: 600;
+}
+.badge-info {
+    background: #43cea2 !important;
+    color: #fff !important;
+    font-weight: 600;
+}
+.badge-secondary {
+    background: #e0e0e0 !important;
+    color: #222 !important;
+    font-weight: 600;
+}

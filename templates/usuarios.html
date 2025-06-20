@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Inventario{% endblock %}
+{% block content %}
+<div class="social-feed">
+    <div class="card social-card p-4 mb-4">
+        <div class="social-card-header">
+            <i class="bi bi-people fs-3 me-2 text-primary"></i>
+            <span class="fw-bold">Panel de Usuarios</span>
+        </div>
+        <div class="social-card-body">
+            <form class="row g-3" method="post">
+                <input type="hidden" name="accion" value="agregar">
+                <div class="col-md-4">
+                    <input type="text" name="nombre" class="form-control" placeholder="Nombre" required>
+                </div>
+                <div class="col-md-4">
+                    <input type="email" name="correo" class="form-control" placeholder="Correo electrónico" required>
+                </div>
+                <div class="col-md-3">
+                    <select name="rol" class="form-select" required>
+                        <option value="">Rol</option>
+                        <option value="admin">Admin</option>
+                        <option value="supervisor">Supervisor</option>
+                        <option value="tecnico">Técnico</option>
+                        <option value="jefe">Jefe de departamento</option>
+                    </select>
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button class="btn btn-success w-100" type="submit"><i class="bi bi-person-plus"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row g-4">
+        {% for usuario in usuarios %}
+        <div class="col-md-6">
+            <div class="card social-card">
+                <div class="social-card-header">
+                    <img src="https://ui-avatars.com/api/?name={{ usuario.nombre|replace(' ','+') }}&background=0071e3&color=fff&rounded=true&size=48" class="social-avatar me-2" alt="avatar">
+                    <div>
+                        <span class="fw-bold">{{ usuario.nombre }}</span><br>
+                        <span class="text-muted small">{{ usuario.correo }}</span>
+                    </div>
+                </div>
+                <div class="social-card-body">
+                    <span class="badge bg-primary mb-2">
+                        {% if usuario.rol == 'admin' %}Admin{% elif usuario.rol == 'supervisor' %}Supervisor{% elif usuario.rol == 'tecnico' %}Técnico{% elif usuario.rol == 'jefe' %}Jefe de departamento{% else %}{{ usuario.rol|capitalize }}{% endif %}
+                    </span>
+                </div>
+                <div class="social-card-actions">
+                    <!-- Formulario para editar usuario -->
+                    <form method="post" class="d-inline">
+                        <input type="hidden" name="accion" value="editar">
+                        <input type="hidden" name="id" value="{{ usuario.id }}">
+                        <input type="hidden" name="nombre" value="{{ usuario.nombre }}">
+                        <input type="hidden" name="correo" value="{{ usuario.correo }}">
+                        <input type="hidden" name="rol" value="{{ usuario.rol }}">
+                        <button type="submit" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i> Editar</button>
+                    </form>
+                    <!-- Formulario para eliminar usuario -->
+                    <form method="post" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');">
+                        <input type="hidden" name="accion" value="eliminar">
+                        <input type="hidden" name="id" value="{{ usuario.id }}">
+                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<a href="#" class="fab-social d-md-none" title="Agregar usuario" data-bs-toggle="modal" data-bs-target="#modalAgregarUsuario">
+    <i class="bi bi-person-plus"></i>
+</a>
+{% endblock %}
