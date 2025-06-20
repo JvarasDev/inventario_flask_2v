@@ -1,9 +1,11 @@
+import os
 import sqlite3
 from flask import g
 
 def get_db():
+    db_path = os.environ.get('DATABASE_PATH', 'devices.db')
     if 'db' not in g:
-        g.db = sqlite3.connect('devices.db')
+        g.db = sqlite3.connect(db_path)
         g.db.row_factory = sqlite3.Row
     return g.db
 
