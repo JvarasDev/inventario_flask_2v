@@ -4,6 +4,7 @@ from datetime import datetime, date
 import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+import os
 
 app = Flask(__name__)
 app.secret_key = 'reemplaza_esto_por_un_valor_secreto_unico'
@@ -539,3 +540,6 @@ def historial():
             resultados.append(m)
     tipos = ['Préstamo', 'Devolución']
     return render_template('historial.html', movimientos=resultados, search=search, filtro_tipo=filtro_tipo, tipos=tipos)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
