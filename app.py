@@ -7,7 +7,8 @@ from functools import wraps
 import os
 
 app = Flask(__name__)
-app.secret_key = 'reemplaza_esto_por_un_valor_secreto_unico'
+# Usa una clave secreta segura desde variable de entorno o valor por defecto
+app.secret_key = os.environ.get('SECRET_KEY', 'cambia_esto_por_una_clave_secreta_segura')
 
 
 @app.before_request
